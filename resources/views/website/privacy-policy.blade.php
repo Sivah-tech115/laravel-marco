@@ -21,7 +21,6 @@
         color: #777;
         line-height: 1.7;
         margin-bottom: 20px;
-
     }
 
     .privacy_content_sec strong {
