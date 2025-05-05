@@ -2,7 +2,7 @@
 @section('title', 'Privacy-policy | Negozi Shop')
 @section('content')
 <style>
-    .privacy_content_sec {
+    /* .privacy_content_sec {
         background-color: #f9f9f9;
         padding: 60px 20px;
     }
@@ -26,7 +26,7 @@
 
     .privacy_content_sec strong {
         color: #333;
-    }
+    } */
 </style>
 <section class="herobanner_sec overlay">
     <div class="container">
