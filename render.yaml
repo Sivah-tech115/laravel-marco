@@ -13,3 +13,7 @@ services:
         value: false
       - key: DB_CONNECTION
         value: sqlite
+    buildCommand: |
+      composer install --no-dev --optimize-autoloader
+      php artisan migrate --force
+      php artisan optimize
