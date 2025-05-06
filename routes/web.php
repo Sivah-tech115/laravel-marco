@@ -56,7 +56,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     });
 
     Route::get('/kelkoo-search', function () {
-        $countries = Country::all(); // Fetch all countries
+        $countries = Country::all();
         return view('Admin/kalkoosearch/createcode', ['countries' => $countries]);
     });
 
