@@ -18,7 +18,7 @@
                 </ul>
             </div>
             <ul class="navbar-nav ms-auto d-block">
-                   {{-- <li>
+                {{-- <li>
                     <div class="dropdown">
                         <a class="dropdown-toggle" href="#" data-bs-toggle="dropdown"><i
                                 class="icon feather icon-bell"></i></a>
@@ -119,15 +119,15 @@
                         <div class="dropdown-menu dropdown-menu-end profile-notification">
                             <div class="pro-head">
                                 @if(auth()->check())
-                                <img src="{{ auth()->user()->image ? asset('storage/users/' . auth()->user()->image) : asset('assets/images/user/avatar-1.jpg') }}"
+                                <img src="{{ auth()->user()->image ? asset('storage/' . auth()->user()->image) : asset('assets/images/user/avatar-1.jpg') }}"
                                     class="img-radius" alt="User-Profile-Image">
                                 @endif
                                 <span>{{ Auth::user()->name }}</span>
 
                             </div>
                             <ul class="pro-body">
-                            <li><a href="{{ route('admin.profile') }}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a>
-                            </li>
+                                <li><a href="{{ route('admin.profile') }}" class="dropdown-item"><i class="feather icon-user"></i> Profile</a>
+                                </li>
                                 <!-- <li><a href="#!" class="dropdown-item"><i class="feather icon-settings"></i>
                                         Settings</a></li> -->
 

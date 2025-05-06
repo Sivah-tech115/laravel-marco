@@ -30,8 +30,12 @@ class ProfileController extends Controller
 
             if ($request->hasFile('image')) {
                 $filename = time() . '.' . $request->image->extension();
-                $request->image->storeAs('', $filename, 'public'); // Save directly in the root of storage/app/publi
-                $user->image = $filename;
+            
+                // Store the file in 'public/image' folder
+                $request->image->storeAs('image', $filename, 'public');
+            
+                // Save the relative path to the image (e.g., image/123456789.jpg)
+                $user->image = 'image/' . $filename;
             }
 
             $user->save();

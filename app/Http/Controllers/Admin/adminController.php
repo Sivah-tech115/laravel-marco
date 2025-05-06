@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Merchant;
 use App\Models\Shortcode;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class adminController extends Controller
 {
     public function index(Request $request)
     {
         // return view('Admin.Dashboard');
-        $config = Shortcode::first(); // get the first (and only) row
+        $data = Merchant::get(); // get the first (and only) row
 
-        return view('Admin/kalkoosearch/apikey', compact('config'));
+        return view('Admin.merchant.index', compact('data'));
     }
 
     public function merchant(Request $request)
@@ -96,7 +99,7 @@ class adminController extends Controller
             ];
         }
 
-        $filename = $merchant->name. '_' . $merchant->kelkoo_merchant_id . '.csv';
+        $filename = $merchant->name . '_' . $merchant->kelkoo_merchant_id . '.csv';
 
         $handle = fopen('php://temp', 'r+');
         fputcsv($handle, $csvHeader);
@@ -114,4 +117,63 @@ class adminController extends Controller
             'Content-Disposition' => "attachment; filename=\"$filename\"",
         ]);
     }
+
+
+    public function showFacebookFeedLink()
+    {
+        $products = Product::get();
+
+        $directory = storage_path('app/public/feeds');
+        $filePath = 'public/feeds/feed.csv';
+        $publicPath = Storage::url('feeds/feed.csv');
+
+        // Ensure the directory exists
+        if (!File::exists($directory)) {
+            File::makeDirectory($directory, 0755, true); // recursive = true
+        }
+
+        // Delete old file if it exists
+        if (Storage::exists($filePath)) {
+            Storage::delete($filePath);
+        }
+
+        // Prepare CSV data
+        $csvData = [];
+        $csvData[] = [
+            'id',
+            'title',
+            'description',
+            'availability',
+            'condition',
+            'price',
+            'link',
+            'image_link'
+        ];
+
+        foreach ($products as $product) {
+            $csvData[] = [
+                $product->id,
+                $product->title,
+                strip_tags($product->description ?? ''),
+                'in stock',
+                'new',
+                number_format($product->price, 2),
+                url('/product/' . $product->slug),
+                $product->image_url
+            ];
+        }
+
+        // Write CSV file
+        $handle = fopen(storage_path('app/public/feeds/feed.csv'), 'w');
+        foreach ($csvData as $row) {
+            fputcsv($handle, $row);
+        }
+        fclose($handle);
+
+        $feedUrl = asset($publicPath);
+
+        return view('Admin.feed', compact('feedUrl'));
+    }
+
+
 }

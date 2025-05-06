@@ -65,4 +65,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::delete('/countries/{id}', [Kelkoosearch::class, 'destroy'])->name('admin.delete.country');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
     Route::post('/profile-update', [ProfileController::class, 'update'])->name('admin.profile.update');
+
+
+    Route::get('/feeds/link', [adminController::class, 'showFacebookFeedLink'])->name('admin.showFacebookFeedLink');
+    Route::get('/feeds', [adminController::class, 'generateFacebookFeed'])->name('admin.generateFacebookFeed');
+
 });

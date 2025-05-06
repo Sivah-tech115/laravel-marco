@@ -54,7 +54,7 @@
                             <div class="col-md-12">
                                 <label class="form-label">Profile Image</label><br>
                                 @if($user && $user->image)
-                                <img id="imagePreview" src="{{ asset('storage/users/' . $user->image) }}" class="profile-img-preview" alt="Avatar">
+                                <img id="imagePreview" src="{{ asset('storage/' . $user->image) }}" class="profile-img-preview" alt="Avatar">
                                 @else
                                 <img id="imagePreview" src="{{ asset('assets/images/avatar-default.jpg') }}" class="profile-img-preview" alt="Default Avatar">
                                 @endif

@@ -26,10 +26,17 @@
                             <span class="pcoded-mtext">Dashboard</span>
                         </a>
                     </li> -->
-
+                    <li class="nav-item ">
+                        <a href="{{route('admin.merchant')}}" class="nav-link">
+                            <span class="pcoded-micon">
+                                <i class="feather icon-user"></i>
+                            </span>
+                            <span class="pcoded-mtext">Merchants</span>
+                        </a>
+                    </li>
                     <li data-username="Settings" class="nav-item pcoded-hasmenu">
                         <a href="#!" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
+                            <span class="pcoded-micon"><i class="feather icon-search"></i></span>
                             <span class="pcoded-mtext">Kelkoo Search</span></a>
                         <ul class="pcoded-submenu">
                             <!-- <li class=""><a href="{{url('/kelkoo-search')}}" class="">Kelkoo Search</a></li> -->
@@ -39,11 +46,11 @@
                         </ul>
                     </li>
                     <li class="nav-item ">
-                        <a href="{{route('admin.merchant')}}" class="nav-link">
+                        <a href="{{route('admin.showFacebookFeedLink')}}" class="nav-link">
                             <span class="pcoded-micon">
-                                <i class="feather icon-home"></i>
+                                <i class="feather icon-user"></i>
                             </span>
-                            <span class="pcoded-mtext">Merchants</span>
+                            <span class="pcoded-mtext">Feeds</span>
                         </a>
                     </li>
                 </ul>
