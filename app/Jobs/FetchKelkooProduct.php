@@ -27,6 +27,7 @@ class FetchKelkooProduct implements ShouldQueue
         $offers = $this->data['offers'] ?? [];
 
         foreach ($offers as $offer) {
+            
             $brand = Brand::updateOrCreate(
                 ['kelkoo_brand_id' => $offer['brand']['id'] ?? null],
                 ['name' => $offer['brand']['name'] ?? '', 'slug' => Str::slug($offer['brand']['name'] ?? '')]
@@ -35,13 +36,13 @@ class FetchKelkooProduct implements ShouldQueue
             $category = Category::updateOrCreate(
                 ['kelkoo_category_id' => $offer['category']['id'] ?? null],
                 ['name' => $offer['category']['name'] ?? '', 'slug' => Str::slug($offer['category']['name'] ?? '')]
-  
+
             );
 
             $merchant = Merchant::updateOrCreate(
                 ['kelkoo_merchant_id' => $offer['merchant']['id'] ?? null],
                 ['name' => $offer['merchant']['name'] ?? '', 'image' => $offer['merchant']['logoUrl'] ?? '']
-  
+
             );
 
             Product::updateOrCreate(
