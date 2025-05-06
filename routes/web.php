@@ -68,6 +68,4 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
 
     Route::get('/feeds/link', [adminController::class, 'showFacebookFeedLink'])->name('admin.showFacebookFeedLink');
-    Route::get('/feeds', [adminController::class, 'generateFacebookFeed'])->name('admin.generateFacebookFeed');
-
 });
