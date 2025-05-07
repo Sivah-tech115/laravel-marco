@@ -1,6 +1,9 @@
 @extends('website.layouts.main')
 @section('content')
-@section('title', 'Category | Negozi Shop')
+@section('title', $kelkooCategoryName ?? 'Category | Negozi Shop')
+@section('meta_title', $kelkooCategoryName ?? 'Category | Negozi Shop')
+@section('meta_keywords', $kelkooCategoryName ?? 'Category | Negozi Shop')
+
 
 <section class="herobanner_sec overlay">
     <div class="container">

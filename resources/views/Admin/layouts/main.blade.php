@@ -56,7 +56,7 @@
     <!-- Bootstrap JS -->
     <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script> -->
 
-
+    {!! App\Models\SeoSetting::first()->header_scripts ?? '' !!}
 
     @yield('styles') <!-- Here styles will be injected -->
     <style>
@@ -316,7 +316,7 @@
     <script src="{{ asset('assets/plugins/data-tables/js/datatables.min.js') }}"></script>
     @yield('scripts') <!-- All JS goes here -->
     <script src="{{ asset('assets/js/custom.js') }}"></script>
-
+    {!! App\Models\SeoSetting::first()->footer_scripts ?? '' !!}
 </body>
 
 </html>

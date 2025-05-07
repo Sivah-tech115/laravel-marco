@@ -1,6 +1,6 @@
 @extends('website.layouts.main')
 @section('title', 'Merchants | Negozi Shop')
-
+@section('keywords', 'Merchants | Negozi Shop')
 
 @section('content')
 

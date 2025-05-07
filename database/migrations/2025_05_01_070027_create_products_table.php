@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('offer_id')->unique();
             $table->text('title');
             $table->text('slug')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->text('keyword')->nullable();
             $table->text('description')->nullable();
             $table->decimal('price', 10, 2);
             $table->decimal('price_without_rebate', 10, 2)->nullable();
@@ -33,7 +36,7 @@ return new class extends Migration
             $table->decimal('estimated_cpc', 10, 5)->nullable();
             $table->decimal('estimated_mobile_cpc', 10, 5)->nullable();
 
-            // Foreign keys
+            // // Foreign keys
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('brand_id')->nullable()->constrained('brands')->onDelete('set null');
             $table->foreignId('merchant_id')->nullable()->constrained('merchants')->onDelete('set null');

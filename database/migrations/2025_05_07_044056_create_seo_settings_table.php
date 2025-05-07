@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('seo_settings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('kelkoo_category_id')->unique();
-            $table->text('name');
-            $table->text('slug')->nullable();
-            $table->text('meta_title')->nullable();
-            $table->text('meta_description')->nullable();
-            $table->text('keyword')->nullable();
+            $table->text('header_scripts')->nullable(); // for <head>
+            $table->text('footer_scripts')->nullable(); // before </body>
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('seo_settings');
     }
 };

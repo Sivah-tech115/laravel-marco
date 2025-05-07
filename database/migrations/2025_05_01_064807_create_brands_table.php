@@ -16,6 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('kelkoo_brand_id')->unique();
             $table->string('name');
             $table->string('slug')->nullable();
+            $table->text('meta_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->text('keyword')->nullable();
             $table->timestamps();
         });
     }

@@ -1,10 +1,12 @@
 @extends('Admin.layouts.main')
+
 @section('breadcrumbtitle', 'Feeds')
 @section('breadcrumbtitle2', 'Feed Link')
+@section('content')
 
 @section('styles')
 <style>
-.copy-container {
+    .copy-container {
     background-color: #e6f4ea;
     padding: 15px;
     border-left: 4px solid #28a745;
@@ -39,20 +41,26 @@
 </style>
 @endsection
 
-@section('content')
-<div class="page-wrapper">
-    <div class="row">
-        <div class="container mt-5">
-            <h2>Product Feed Link</h2>
-            <p>Copy the following Product Feed link </p>
+<div class="row">
+
+    <!-- Form Card -->
+    <div class="col-12 mb-3">
+        <div class="card">
+            <div class="card-header">
+                <h5>Product Feed Link</h5>
+                <p>Copy the following Product Feed link </p>
+            </div>
+            <div class="card-body">
             <div class="copy-container">
                 <span id="feedUrl" class="copy-url">{{ $feedUrl }}</span>
                 <a href="javascript:void(0)" onclick="copyToClipboard()">Copy Link</a>
                 <span id="copyStatus" style="margin-left: 10px;"></span>
             </div>
+            </div>
         </div>
     </div>
 </div>
+
 @endsection
 
 @section('scripts')

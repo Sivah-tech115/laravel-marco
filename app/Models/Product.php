@@ -13,6 +13,9 @@ class Product extends Model
         'description',
         'price',
         'price_without_rebate',
+        'meta_title',
+        'meta_description',
+        'keyword',
         'rebate_percentage',
         'delivery_cost',
         'total_price',
@@ -46,4 +49,3 @@ class Product extends Model
         return $this->belongsTo(Merchant::class);
     }
 }
-

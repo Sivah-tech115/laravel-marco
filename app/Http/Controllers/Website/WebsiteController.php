@@ -198,6 +198,8 @@ class WebsiteController extends Controller
         $merchant = Merchant::where('name', $name)->firstOrFail();
         $kelkoomerchantId = $merchant->kelkoo_merchant_id;
         $kelkooMerchantName = $merchant->name;
+        $kelkooMerchantmetatitle = $merchant->meta_title;
+        $kelkooMerchantkeyword = $merchant->keyword;
         $shortcode = Shortcode::first();
         $page = $request->input('page', 1);
 
@@ -309,6 +311,7 @@ class WebsiteController extends Controller
             'totalPages' => $totalPages,
             'minPrice' => $minPrice,
             'maxPrice' => $maxPrice,
+            'product' => $product
         ]);
     }
 

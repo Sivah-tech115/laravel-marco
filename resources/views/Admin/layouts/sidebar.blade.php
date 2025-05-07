@@ -53,6 +53,24 @@
                             <span class="pcoded-mtext">Feeds</span>
                         </a>
                     </li>
+
+                    <li class="nav-item ">
+                        <a href="{{route('admin.seo.edit')}}" class="nav-link">
+                            <span class="pcoded-micon">
+                                <i class="feather icon-settings"></i>
+                            </span>
+                            <span class="pcoded-mtext">Seo Scripts</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item ">
+                        <a href="{{route('admin.settings.edit')}}" class="nav-link">
+                            <span class="pcoded-micon">
+                                <i class="feather icon-settings"></i>
+                            </span>
+                            <span class="pcoded-mtext">Seo Tags</span>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

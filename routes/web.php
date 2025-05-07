@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\Kelkoosearch;
 use App\Http\Controllers\Website\WebsiteController;
+use App\Http\Controllers\SeoSettingController;
 use App\Models\Country;
 
 
@@ -66,4 +67,12 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('admin.profile');
     Route::post('/profile-update', [ProfileController::class, 'update'])->name('admin.profile.update');
     Route::get('/feeds/link', [adminController::class, 'showFacebookFeedLink'])->name('admin.showFacebookFeedLink');
+
+
+    Route::get('seo-settings', [SeoSettingController::class, 'edit'])->name('admin.seo.edit');
+    Route::put('seo-settings', [SeoSettingController::class, 'update'])->name('admin.seo.update');
+
+    Route::get('settings', [SeoSettingController::class, 'Settingedit'])->name('admin.settings.edit');
+    Route::post('settings', [SeoSettingController::class, 'Settingupdate'])->name('admin.settings.update');
 });
+

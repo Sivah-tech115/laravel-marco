@@ -1,6 +1,13 @@
 @extends('website.layouts.main')
-@section('title', 'Offers | Negozi Shop')
+@section('title', $product->meta_title ?? 'Offers | Negozi Shop')
+@section('meta_title', $product->meta_title ?? 'Offers | Negozi Shop')
+@section('meta_description', $product->meta_description ?? 'Offers | Negozi Shop')
+@section('meta_keywords', $product->meta_title ?? 'Offers | Negozi Shop')
+
 @section('content')
+<?php
+// dd($product->meta_title);
+?>
 <section class="singlepro_sec">
     <div class="container">
         <div class="pro_colm">
