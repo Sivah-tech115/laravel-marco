@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Kelkoosearch;
 use App\Http\Controllers\Website\WebsiteController;
 use App\Http\Controllers\SeoSettingController;
 use App\Models\Country;
+use Illuminate\Support\Facades\Auth;
 
 
 Auth::routes(['login' => false]);
