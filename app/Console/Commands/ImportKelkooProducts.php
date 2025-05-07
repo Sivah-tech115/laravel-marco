@@ -62,14 +62,16 @@ class ImportKelkooProducts extends Command
         $data = $response->json();
 
         foreach ($data as $offer) {
-            $merchant = Merchant::updateOrCreate(
-                ['kelkoo_merchant_id' => $offer['id']],
-                [
-                    'name' => $offer['name'] ?? '',
-                    'image' => $offer['logoUrl'] ?? '',
-                    'url' => $offer['url'] ?? ''
-                ]
+            $merchantName = data_get($offer, 'merchant.name', '');
 
+            $merchant = Merchant::updateOrCreate(
+                ['kelkoo_merchant_id' => data_get($offer, 'merchant.id')],
+                [
+                    'name' => $merchantName,
+                    'image' => data_get($offer, 'merchant.logoUrl', ''),
+                    'meta_title' => $merchantName,
+                    'keyword' => $merchantName,
+                ]
             );
         }
 
