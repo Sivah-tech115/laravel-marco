@@ -4,39 +4,34 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
-use App\Models\Brand;
-use App\Models\Category;
 use App\Models\Merchant;
-use App\Models\Product;
 use App\Models\Shortcode;
 
 class ImportKelkooProducts extends Command
 {
     /**
      * The name and signature of the console command.
-     *
-     * @var string
      */
     protected $signature = 'app:import-kelkoo-merchant';
 
     /**
      * The console command description.
-     *
-     * @var string
      */
-    protected $description = 'Imports merchant from Kelkoo API into the database';
+    protected $description = 'Imports merchants from Kelkoo API into the database';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $country = 'it';  // Change the country as needed
+        $country = 'it';  // Set country code (e.g., 'it' for Italy)
         $shortcode = Shortcode::first();
+
         if (!$shortcode || !$shortcode->api_key) {
-            $this->error('Token not found');
+            $this->error('❌ API token not found in the shortcode table.');
             return;
         }
+
         $token = $shortcode->api_key;
 
         $url = "https://api.kelkoogroup.net/publisher/shopping/v2/feeds/merchants";
@@ -50,31 +45,45 @@ class ImportKelkooProducts extends Command
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
-            'Accept-encoding' => 'gzip'
+            'Accept-Encoding' => 'gzip'
         ])->get($url, $params);
 
         if (!$response->successful()) {
-            $this->error('Failed to fetch data from Kelkoo API. Status: ' . $response->status());
-            $this->info('Import  ' . $response);
+            $this->error('❌ Failed to fetch data from Kelkoo API. HTTP Status: ' . $response->status());
             return;
         }
 
-        $data = $response->json();
+        $merchants = $response->json();
 
-        foreach ($data as $offer) {
-            $merchantName = data_get($offer, 'merchant.name', '');
-
-            $merchant = Merchant::updateOrCreate(
-                ['kelkoo_merchant_id' => data_get($offer, 'merchant.id')],
-                [
-                    'name' => $merchantName,
-                    'image' => data_get($offer, 'merchant.logoUrl', ''),
-                    'meta_title' => $merchantName,
-                    'keyword' => $merchantName,
-                ]
-            );
+        if (!is_array($merchants)) {
+            $this->error('❌ Unexpected response format from Kelkoo API.');
+            return;
         }
 
-        $this->info('Import completed successfully. Total merchants imported: ' . count($data));
+        $importedCount = 0;
+
+        foreach ($merchants as $item) {
+            $merchantId = $item['id'] ?? null;
+            $merchantName = $item['name'] ?? null;
+            $logoUrl = $item['logoUrl'] ?? null;
+            $Url = $item['url'] ?? null;
+            
+
+
+            Merchant::updateOrCreate(
+                ['kelkoo_merchant_id' => $merchantId],
+                [
+                    'name' => $merchantName,
+                    'image' => $logoUrl ?? '',
+                    'meta_title' => $merchantName,
+                    'keyword' => $merchantName,
+                    'url' => $Url,
+                ]
+            );
+
+            $importedCount++;
+        }
+
+        $this->info("✅ Import completed successfully. Total merchants imported or updated: {$importedCount}");
     }
 }
