@@ -31,7 +31,7 @@ class WebsiteController extends Controller
         $cacheKey = "kelkoo_offers_page_{$page}_{$country}_query_" . md5($request->input('query'));
 
         // Cache response for 1 hour
-        $data = Cache::remember($cacheKey, now()->addHour(), function () use ($token, $country, $page, $query) {
+        $data = Cache::remember($cacheKey, now()->addMinutes(60), function () use ($token, $country, $page, $query) {
             $url = "https://api.kelkoogroup.net/publisher/shopping/v2/search/offers";
             $params = [
                 'country' => $country,

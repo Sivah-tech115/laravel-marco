@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Services;
+
+use Spatie\Sitemap\SitemapGenerator;
+
+class SitemapService
+{
+    public function generateSitemap()
+    {
+        $sitemapPath = public_path('sitemap.xml');
+
+        SitemapGenerator::create(config('app.url'))
+            ->configureCrawler(function ($crawler) {
+                $crawler->setMaximumDepth(3); // You can increase or decrease depth if needed
+            })
+            ->writeToFile($sitemapPath);
+    }
+}
