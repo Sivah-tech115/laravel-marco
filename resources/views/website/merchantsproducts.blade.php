@@ -60,34 +60,51 @@
 
             </ul>
             <div class="pagination">
-                {{-- Previous --}}
-                @if($page > 1)
-                <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantName, 'page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
-                    <i class="fa-solid fa-angle-left"></i>
-                </a>
-                @else
-                <span class="step prev disabled"><i class="fa-solid fa-angle-left"></i></span>
-                @endif
+    {{-- Previous --}}
+    @if ($page > 1)
+        <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantslug, 'page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
+            <i class="fa-solid fa-angle-left"></i>
+        </a>
+    @else
+        <span class="step prev disabled"><i class="fa-solid fa-angle-left"></i></span>
+    @endif
 
-                {{-- Numbered pages --}}
-                @php
-                $startPage = max(1, $page - 2);
-                $endPage = min($totalPages, $page + 2);
-                @endphp
+    @php
+        $startPage = max(1, $page - 2);
+        $endPage = min($totalPages, $page + 2);
+    @endphp
 
-                @for($i = $startPage; $i <= $endPage; $i++)
-                    <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantName, 'page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
-                    @endfor
+    {{-- First Page --}}
+    @if ($startPage > 1)
+        <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantslug, 'page' => 1, 'query' => request()->query('query')]) }}" class="step">1</a>
+        @if ($startPage > 2)
+            <span class="step">...</span>
+        @endif
+    @endif
 
-                    {{-- Next --}}
-                    @if($hasNextPage && $page < $totalPages)
-                        <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantName, 'page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
-                        <i class="fa-solid fa-angle-right"></i>
-                        </a>
-                        @else
-                        <span class="step next disabled"><i class="fa-solid fa-angle-right"></i></span>
-                        @endif
-            </div>
+    {{-- Numbered Pages --}}
+    @for ($i = $startPage; $i <= $endPage; $i++)
+        <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantslug, 'page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
+    @endfor
+
+    {{-- Last Page --}}
+    @if ($endPage < $totalPages)
+        @if ($endPage < $totalPages - 1)
+            <span class="step">...</span>
+        @endif
+        <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantslug, 'page' => $totalPages, 'query' => request()->query('query')]) }}" class="step">{{ $totalPages }}</a>
+    @endif
+
+    {{-- Next --}}
+    @if ($hasNextPage && $page < $totalPages)
+        <a href="{{ route('merchant.offers', ['name' => $kelkooMerchantslug, 'page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
+            <i class="fa-solid fa-angle-right"></i>
+        </a>
+    @else
+        <span class="step next disabled"><i class="fa-solid fa-angle-right"></i></span>
+    @endif
+</div>
+
 
 
         </div>

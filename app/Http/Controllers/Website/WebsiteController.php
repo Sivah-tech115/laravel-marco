@@ -130,7 +130,7 @@ class WebsiteController extends Controller
             'products' => $offers,
             'page' => $page,
             'hasNextPage' => $hasNextPage,
-            'totalPages' => $totalPages,
+            'totalPages' => $totalPages - 1,
         ]);
     }
 
@@ -187,7 +187,7 @@ class WebsiteController extends Controller
             'products' => $offers,
             'page' => $page,
             'hasNextPage' => $hasNextPage,
-            'totalPages' => $totalPages,
+            'totalPages' => $totalPages - 1,
         ]);
     }
 
@@ -195,9 +195,10 @@ class WebsiteController extends Controller
 
     public function merchantProducts(Request $request, $name)
     {
-        $merchant = Merchant::where('name', $name)->firstOrFail();
+        $merchant = Merchant::where('slug', $name)->firstOrFail();
         $kelkoomerchantId = $merchant->kelkoo_merchant_id;
         $kelkooMerchantName = $merchant->name;
+        $kelkooMerchantslug = $merchant->slug;
         $kelkooMerchantmetatitle = $merchant->meta_title;
         $kelkooMerchantkeyword = $merchant->keyword;
         $shortcode = Shortcode::first();
@@ -242,10 +243,11 @@ class WebsiteController extends Controller
 
         return view('website.merchantsproducts', [
             'kelkooMerchantName' => $kelkooMerchantName,
+            'kelkooMerchantslug' => $kelkooMerchantslug,
             'products' => $offers,
             'page' => $page,
             'hasNextPage' => $hasNextPage,
-            'totalPages' => $totalPages,
+            'totalPages' => $totalPages - 1,
         ]);
     }
 

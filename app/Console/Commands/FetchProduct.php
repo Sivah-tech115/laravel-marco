@@ -112,6 +112,7 @@ class FetchProduct extends Command
                     ['kelkoo_merchant_id' => data_get($offer, 'merchant.id')],
                     [
                         'name' => $merchantName,
+                        'slug' => Str::slug($merchantName),
                         'image' => data_get($offer, 'merchant.logoUrl', ''),
                         'meta_title' => $merchantName,
                         'keyword' => $merchantName,

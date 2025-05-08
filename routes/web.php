@@ -9,7 +9,7 @@ use App\Http\Controllers\Website\WebsiteController;
 use App\Http\Controllers\SeoSettingController;
 use App\Models\Country;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Response;
 
 Auth::routes(['login' => false]);
 
@@ -27,21 +27,30 @@ Route::get('/shop', function () {
 
 
 Route::get('/brands', [WebsiteController::class, 'brands'])->name('brands');
-Route::get('/brands/offers/{name}', [WebsiteController::class, 'brandProducts'])->name('brands.offers');
+Route::get('/offers_brands/{name}', [WebsiteController::class, 'brandProducts'])->name('brands.offers');
 
 
 Route::get('/offers/{name}', [WebsiteController::class, 'SingleBrandProduct'])->name('offers.product');
 Route::get('/category/offers/{name}', [WebsiteController::class, 'categoryProducts'])->name('category.offers');
 
 Route::get('/merchants', [WebsiteController::class, 'Merchants'])->name('merchants');
-Route::get('/merchant/offers/{name}', [WebsiteController::class, 'merchantProducts'])->name('merchant.offers');
+Route::get('/merchants/{name}', [WebsiteController::class, 'merchantProducts'])->name('merchant.offers');
 
 Route::get('/privacy-policy', function () {
     return view('website.privacy-policy');
 })->name('privacy-policy');
 
+Route::get('/sitemap.xml', function () {
+    $sitemapPath = public_path('sitemap.xml');
+    
+    if (file_exists($sitemapPath)) {
+        return Response::file($sitemapPath, [
+            'Content-Type' => 'application/xml',
+        ]);
+    }
 
-
+    return response('Sitemap not found', 404);
+});
 //////////////////////////////////  Admin /////////////////////////////////////////////////
 
 

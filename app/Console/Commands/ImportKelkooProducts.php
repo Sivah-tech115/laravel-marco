@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Merchant;
 use App\Models\Shortcode;
+use Illuminate\Support\Str;
 
 class ImportKelkooProducts extends Command
 {
@@ -78,6 +79,7 @@ class ImportKelkooProducts extends Command
                     'meta_title' => $merchantName,
                     'keyword' => $merchantName,
                     'url' => $Url,
+                'slug' => Str::slug(str_replace('.', '-', $merchantName))
                 ]
             );
 
