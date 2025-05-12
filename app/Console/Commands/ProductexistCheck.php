@@ -28,7 +28,7 @@ class ProductexistCheck extends Command
      */
     public function handle()
     {
-        $country = 'it';
+        // $country = 'it';
         $shortcode = Shortcode::first();
 
         if (!$shortcode || !$shortcode->api_key) {
@@ -37,6 +37,8 @@ class ProductexistCheck extends Command
         }
 
         $token = $shortcode->api_key;
+        $country = $shortcode->countryName;
+
         $url = "https://api.kelkoogroup.net/publisher/shopping/v2/search/offers";
 
         $products = Product::all();

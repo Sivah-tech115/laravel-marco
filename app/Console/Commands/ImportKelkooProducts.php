@@ -25,7 +25,7 @@ class ImportKelkooProducts extends Command
      */
     public function handle()
     {
-        $country = 'it';  // Set country code (e.g., 'it' for Italy)
+        // $country = 'it';  // Set country code (e.g., 'it' for Italy)
         $shortcode = Shortcode::first();
 
         if (!$shortcode || !$shortcode->api_key) {
@@ -34,6 +34,7 @@ class ImportKelkooProducts extends Command
         }
 
         $token = $shortcode->api_key;
+        $country = $shortcode->countryName;
 
         $url = "https://api.kelkoogroup.net/publisher/shopping/v2/feeds/merchants";
 

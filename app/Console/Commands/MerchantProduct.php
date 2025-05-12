@@ -36,7 +36,7 @@ class MerchantProduct extends Command
 
     public function handle()
     {
-        $country = 'it';  // Change the country as needed
+        // $country = 'it';  // Change the country as needed
         $page = 1;
         $shortcode = Shortcode::first();
 
@@ -47,6 +47,8 @@ class MerchantProduct extends Command
         }
 
         $token = $shortcode->api_key;
+
+        $country = $shortcode->countryName;
 
         // Fetch all merchants
         $merchants = Merchant::all();

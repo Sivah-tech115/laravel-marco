@@ -38,7 +38,7 @@ class FetchProduct extends Command
 
     public function handle()
     {
-        $country = 'it';  // Change the country as needed
+        // $country = 'it';  // Change the country as needed
         $page = 1;
         $shortcode = Shortcode::first();
         if (!$shortcode || !$shortcode->api_key) {
@@ -46,6 +46,8 @@ class FetchProduct extends Command
             return;
         }
         $token = $shortcode->api_key;
+        $country = $shortcode->countryName;
+
 
         do {
             $url = "https://api.kelkoogroup.net/publisher/shopping/v2/search/offers";
