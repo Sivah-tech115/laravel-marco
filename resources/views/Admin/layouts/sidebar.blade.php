@@ -48,9 +48,18 @@
                     <li class="nav-item ">
                         <a href="{{route('admin.showFacebookFeedLink')}}" class="nav-link">
                             <span class="pcoded-micon">
-                                <i class="feather icon-user"></i>
+                                <i class="feather icon-layers"></i>
                             </span>
                             <span class="pcoded-mtext">Feeds</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item ">
+                        <a href="{{route('admin.products.index')}}" class="nav-link">
+                            <span class="pcoded-micon">
+                                <i class="feather icon-award"></i>
+                            </span>
+                            <span class="pcoded-mtext">Offers</span>
                         </a>
                     </li>
 

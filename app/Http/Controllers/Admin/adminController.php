@@ -176,4 +176,12 @@ class adminController extends Controller
     }
 
 
+
+    public function AllOffers()
+{
+    $products = Product::get(); // Show 10 per page
+    return view('Admin.products.index', compact('products'));
+}
+
+
 }

@@ -84,5 +84,9 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 
     Route::get('settings', [SeoSettingController::class, 'Settingedit'])->name('admin.settings.edit');
     Route::post('settings', [SeoSettingController::class, 'Settingupdate'])->name('admin.settings.update');
+
+    Route::get('/offers', [adminController::class, 'AllOffers'])->name('admin.products.index');
+
+
 });
 
