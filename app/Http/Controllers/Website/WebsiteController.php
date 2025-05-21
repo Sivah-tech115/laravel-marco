@@ -66,7 +66,7 @@ class WebsiteController extends Controller
             'products' => $offers,
             'page' => $page,
             'hasNextPage' => $hasNextPage,
-            'totalPages' => $totalPages,
+            'totalPages' => $totalPages - 1,
         ]);
     }
 

@@ -822,6 +822,9 @@ span.pro_time {
         overflow: hidden;
         position: relative;
     }
+    section.productgrid_sec ul.pro_grid li {
+        max-width: calc(100% / 3 - 20px);
+    }
 
     body:has(.nav_menu.active)::after {
         content: "";
@@ -891,7 +894,9 @@ span.pro_time {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
     }
-
+    section.productgrid_sec ul.pro_grid li {
+        max-width: calc(100% / 2 - 10px);
+    }
     .contact_sec {
         padding: 50px 20px;
     }
@@ -995,7 +1000,9 @@ span.pro_time {
     footer .foot_colms {
         width: 100%;
     }
-
+    section.productgrid_sec ul.pro_grid li {
+        max-width: 100%;
+    }
     .container_copyright {
         justify-content: center;
     }
