@@ -1,6 +1,6 @@
 @extends('Admin.layouts.main')
-@section('breadcrumbtitle', 'Offers')
-@section('breadcrumbtitle2', 'All Offers')
+@section('breadcrumbtitle', 'Category')
+@section('breadcrumbtitle2', 'All Categories')
 
 
 @section('styles')
@@ -27,22 +27,34 @@
         <div class="col-12 mb-3">
             <div class="card">
                 <div class="card-header">
-                    <h5>Offers List</h5>
+                    <h5>Category List</h5>
                 </div>
                 <div class="card-body">
-                  
+                    @if($category->isEmpty())
+                    <p>No data available.</p>
+                    @else
                     <table id="simpletable" class="table table-bordered nowrap w-100">
                         <thead>
-        <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Slug</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-                        
-                    </table>
+                            <tr>
+                                <th>Category Id</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($category as $merchant)
+                            <tr>
+                                <td>{{ $merchant->kelkoo_category_id }}</td>
+                                <td>{{ $merchant->name }}</td>
+                                <td>
+                                <a href="{{ route('category.offers', [Str::slug($merchant->name)]) }}" class="btn btn-primary">View</a>
 
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    @endif
                 </div>
             </div>
         </div>
@@ -55,15 +67,7 @@
 <script>
     $(document).ready(function() {
         $('#simpletable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '{{ route("admin.products.ajax") }}',
-            columns: [
-                { data: 'id', name: 'id' },
-                { data: 'title', name: 'title' },
-                { data: 'slug', name: 'slug' },
-                { data: 'action', name: 'action', orderable: false, searchable: false }
-            ],
+            responsive: true,
             initComplete: function() {
                 $('#simpletable').wrap('<div class="OverXTable overflow-x-auto"></div>');
             }

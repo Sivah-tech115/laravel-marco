@@ -7,6 +7,7 @@ use App\Models\Shortcode;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class FetchCategory extends Command
 {
@@ -83,6 +84,8 @@ class FetchCategory extends Command
                     'slug'        => Str::slug($categoryName),
                     'meta_title'  => $categoryName,
                     'keyword'     => $categoryName,
+                    'created_at'  => Carbon::now(),
+                    'updated_at'  => Carbon::now(),
                 ]
             );
 

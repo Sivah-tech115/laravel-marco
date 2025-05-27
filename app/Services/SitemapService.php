@@ -16,37 +16,58 @@ class SitemapService
     public function generateSitemap()
     {
         $sitemapPath = public_path('sitemap.xml');
-
-        // Start with crawling the site to get base URLs
+    
+        // Base crawl
         $sitemap = SitemapGenerator::create(config('app.url'))
             ->configureCrawler(function ($crawler) {
-                $crawler->setMaximumDepth(3); // Control the crawling depth
+                $crawler->setMaximumDepth(3);
             })
-            ->getSitemap(); // Get the basic sitemap generated
-
-        // Fetch dynamic content (e.g., Posts, Pages, or other models)
+            ->getSitemap();
+    
+        // Define models and their route or URL structure
         $models = [
-            Merchant::class, // Add other models you want to include
-            Brand::class, // Example for pages
-            Product::class, // Example for products
-            Category::class, // Example for products
+            'merchants' => Merchant::class,
+            'brands' => Brand::class,
+            'products' => Product::class,
+            'categories' => Category::class,
         ];
-
-        foreach ($models as $model) {
-            $items = $model::all(); // Fetch all records from the model
-
+    
+        foreach ($models as $type => $model) {
+            $items = $model::all();
+    
             foreach ($items as $item) {
-                $url = route('admin.merchant', ['slug' => $item->slug]); // Dynamically generate the URL based on model data
-
+                // Decide URL based on model type
+                switch ($type) {
+                    case 'merchants':
+                        $url = route('merchant.offers', ['name' => $item->slug]);
+                        break;
+    
+                    case 'brands':
+                        $url = route('brands.offers', ['name' => $item->slug]);
+                        break;
+    
+                    case 'products':
+                        $url = route('offers.product', ['name' => $item->slug]);
+                        break;
+    
+                    case 'categories':
+                        $url = route('category.offers', ['name' => $item->slug]);
+                        break;
+    
+                    default:
+                        continue 2; // skip unknown type
+                }
+    
                 $sitemap->add(
                     Url::create($url)
-                        ->setLastModificationDate($item->updated_at) // Set last modified date
-                        ->setPriority(0.8) // Optional: Set priority dynamically if needed
+                        ->setLastModificationDate($item->updated_at ?? now())
+                        ->setPriority(0.8)
                 );
             }
         }
-
-        // Write the sitemap to the file
+    
+        // Save sitemap
         $sitemap->writeToFile($sitemapPath);
     }
+    
 }

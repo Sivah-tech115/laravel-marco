@@ -16,7 +16,7 @@
             <ul class="brand_grid">
                 @foreach($brands as $brand)
                 <li>
-                    <a href="{{ route('brands.offers', ['name' => $brand->slug]) }}">
+                    <a href="{{ route('brands.offers', ['slug' => $brand->slug]) }}">
                         {{ $brand->name }}
                     </a>
                 </li>

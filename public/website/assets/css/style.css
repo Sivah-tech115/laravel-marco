@@ -129,6 +129,7 @@ footer {
     cursor: pointer;
     line-height: 1.1;
     text-align: center;
+    font-size: 14px;
 }
 
 .primary_btn,
@@ -435,6 +436,7 @@ footer .payment_links svg {
     border-width: 3px;
     line-height: 1.5;
     margin-left: -20px;
+    font-size: 16px;
 }
 
 .search_form .btn:hover {
@@ -458,7 +460,9 @@ footer .payment_links svg {
     align-items: center;
     justify-content: center;
 }
-
+.hero_txt h2 {
+    text-align: center;
+}
 .productgrid_sec,
 .brands_sec,
 .merchants_sec {
@@ -790,7 +794,53 @@ span.pro_time {
 .offer_grid .pro_meta {
     flex-shrink: 0;
 }
-
+/********* With filter CSS *********/
+.productgrid_sec .with_sidebar {
+    flex-direction: unset;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    position: relative;
+}
+.productgrid_sec .with_sidebar .filter_sidebar {
+    width: calc(20% - 80px);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 90px;
+    
+}
+.productgrid_sec .with_sidebar .product_list {
+    width: calc(80% - 40px);
+}
+section.productgrid_sec .with_sidebar ul.pro_grid li {
+    max-width: calc(100% / 3 - 20px);
+}
+.filter_footer {
+    width: 100%;
+    /*margin-top: 20px;*/
+}
+.filter_footer a {
+    width: -webkit-fill-available;
+    font-size: 12px;
+}
+.filter_sidebar form.long-brand-list {
+    height: 500px;
+    overflow: auto;
+}
+.filter_sidebar form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.filter_sidebar form .filter_cards {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
 /********* Responsive CSS *********/
 @media (max-width: 1440px) {
 
@@ -884,6 +934,15 @@ span.pro_time {
     footer .foot_colms {
         width: calc(100% / 2 - 10px);
     }
+    .productgrid_sec .with_sidebar .filter_sidebar {
+        width: calc(30% - 80px);
+    }
+    .productgrid_sec .with_sidebar .product_list {
+        width: calc(70% - 40px);
+    }
+    section.productgrid_sec .with_sidebar ul.pro_grid li {
+        max-width: calc(100% / 2 - 15px);
+    }
 }
 
 @media (max-width: 991px) {
@@ -909,6 +968,14 @@ span.pro_time {
     .contact_sec .container .contact_colm {
         padding: 20px;
     }
+    .productgrid_sec .with_sidebar .filter_sidebar,
+    .productgrid_sec .with_sidebar .product_list{
+        width: 100%;
+    }
+    .productgrid_sec .with_sidebar .filter_sidebar {
+        position: static;
+    }
+    
 }
 
 @media (max-width: 768px) {
@@ -1000,7 +1067,8 @@ span.pro_time {
     footer .foot_colms {
         width: 100%;
     }
-    section.productgrid_sec ul.pro_grid li {
+    section.productgrid_sec ul.pro_grid li,
+    section.productgrid_sec .with_sidebar ul.pro_grid li{
         max-width: 100%;
     }
     .container_copyright {

@@ -8,84 +8,126 @@ use App\Models\Product;
 
 class MigrateTables extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:migrate-tables';
+    protected $description = 'Migrate offers with pagination';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Migrate one offer post from wp_posts and wp_postmeta into products table';
-
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        // Step 1: Fetch WordPress offer post and its metadata
-        $offers = DB::table('wp_posts')
-            ->join('wp_postmeta', 'wp_posts.ID', '=', 'wp_postmeta.post_id')
-            ->select('wp_posts.*', 'wp_postmeta.meta_key', 'wp_postmeta.meta_value')
-            ->where('wp_posts.post_type', 'offers')
-            ->where('wp_posts.ID',374 ) // change or remove for multiple
-            ->get();
+        $offset = 0;
+        $batchSize = 50;
+        $totalProcessed = 0;
 
-        // Step 2: Organize post data and metadata
-        $postData = [];
-        $metaData = [];
+        do {
+            // Get 50 offers
+            $offers = DB::table('wp_posts as p')
+                ->join('wp_postmeta as pm', 'p.ID', '=', 'pm.post_id')
+                ->where('p.post_type', 'offers')
+                ->where('p.comment_count', '0')
+                ->where('p.post_status', 'publish')
+                ->where('pm.meta_key', 'offers_ids')
+                ->whereNotNull('pm.meta_value')
+                ->where('pm.meta_value', '!=', '')
+                ->orderBy('p.ID', 'asc')
+                ->offset($offset)
+                ->limit($batchSize)
+                ->select('p.*', 'pm.meta_value as offers_ids')
+                ->get();
 
-        foreach ($offers as $row) {
-            if (empty($postData)) {
-                $postData = [
-                    'post_id'      => $row->ID,
-                    'title'        => $row->post_title,
-                    'description'  => $row->post_content,
-                    'slug'         => $row->post_name,
-                    'status'       => $row->post_status,
-                    'created_at'   => $row->post_date,
-                    'updated_at'   => $row->post_modified,
-                    'url'          => $row->guid,
-                ];
+            // If no more offers, break
+            if ($offers->isEmpty()) {
+                break;
             }
 
-            $metaData[$row->meta_key] = $row->meta_value;
-        }
+            // Get all meta data for these offers
+            $postIds = $offers->pluck('ID');
+            $allMetas = DB::table('wp_postmeta')
+                ->whereIn('post_id', $postIds)
+                ->get()
+                ->groupBy('post_id');
 
-        // Step 3: Merge post and metadata
-        $productData = array_merge($postData, $metaData);
+            // Process each offer
+            foreach ($offers as $offer) {
+                $postmeta = $allMetas[$offer->ID] ?? collect();
+                
+                // Convert meta to array
+                $meta = [];
+                foreach ($postmeta as $m) {
+                    $meta[$m->meta_key] = $m->meta_value;
+                }
 
-        $categoryExternalId = null;
+                // Get category and merchant IDs
+                $categoryId = null;
+                $merchantId = null;
+                
+                if (!empty($meta['cusotm_img_url'])) {
+                    $urlParts = parse_url($meta['cusotm_img_url']);
+                    if (!empty($urlParts['query'])) {
+                        parse_str($urlParts['query'], $queryParams);
+                        if (!empty($queryParams['categoryId'])) {
+                            $categoryId = DB::table('categories')
+                                ->where('kelkoo_category_id', $queryParams['categoryId'])
+                                ->value('id');
+                        }
+                        if (!empty($queryParams['merchantId'])) {
+                            $merchantId = DB::table('merchants')
+                                ->where('kelkoo_merchant_id', $queryParams['merchantId'])
+                                ->value('id');
+                        }
+                    }
+                }
+                
+                    // Skip if category ID is missing
+                    if (empty($categoryId)) {
+                        \Log::info("Skipped offer ID {$offer->ID} due to missing category ID.");
+                        continue;
+                    }
+                    
+                    // Skip if merchant ID is missing
+                    if (empty($merchantId)) {
+                        \Log::info("Skipped offer ID {$offer->ID} due to missing merchant ID.");
+                        continue;
+                    }
 
-        if (!empty($productData['cusotm_img_url'])) {
-            $imgUrl = $productData['cusotm_img_url'];
-            $urlParts = parse_url($imgUrl);
+                // Create/update product
+                Product::updateOrCreate(
+                    ['offer_id' => $offer->offers_ids],
+                    [
+                        'title' => $offer->post_title,
+                        'description' => $offer->post_content,
+                        'slug' => $offer->post_name,
+                        'keyword' => $offer->post_title,
+                        'meta_title' => $offer->post_title,
+                        'meta_description' => $offer->post_content,
+                        'country' => $meta['offers_country'] ?? null,
+                        'ean' => $meta['offers_ean_code'] ?? null,
+                        'image_url' => $meta['cusotm_img_url'] ?? null,
+                        'price' => $meta['price'] ?? null,
+                        'go_url' => $meta['custom_go_url'] ?? null,
+                        'availability_status' => 'in_stock',
+                        'currency' => $meta['price_cuurency'] ?? null,
+                        'offer_id' => $offer->offers_ids,
+                        'merchant_id' => $merchantId,
+                        'category_id' => $categoryId,
+                    ]
+                );
 
-            if (!empty($urlParts['query'])) {
-                parse_str($urlParts['query'], $queryParams);
-                $categoryExternalId = $queryParams['categoryId'] ?? null;
+                // Mark as processed
+                DB::table('wp_posts')
+                    ->where('ID', $offer->ID)
+                    ->update(['comment_count' => 1]);
+
+                $totalProcessed++;
             }
-        }
 
-        $categoryId = null;
+            $this->info("Processed batch: " . ($offset + $batchSize) . " | Total: $totalProcessed");
+               \Log::info("Processed batch: " . ($offset + $batchSize) . " | Total: $totalProcessed");
 
-        if ($categoryExternalId) {
-            $categoryId = DB::table('categories')
-                ->where('kelkoo_category_id', $categoryExternalId)
-                ->value('id');
-        }
+            
+            // Move to next batch
+            $offset += $batchSize;
 
-        $productData['category_id'] = $categoryId;
+        } while (true);
 
-        // Step 7: Insert into the products table
-        // Product::create($productData);
-
-        // Step 8: Output the result
-        $this->info('Offer imported to products table:');
-        $this->line(json_encode($productData, JSON_PRETTY_PRINT));
+        $this->info("Migration completed! Total processed: $totalProcessed");
     }
 }

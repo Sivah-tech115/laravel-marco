@@ -15,7 +15,7 @@
             <ul class="merchants_grid">
                 @foreach($brands as $brand)
                 <li>
-                    <a href="{{ route('merchant.offers', ['name' => $brand->slug]) }}">
+                    <a href="{{ route('merchant.offers', ['slug' => $brand->slug]) }}">
                         <img src="{{ $brand->image ?: asset('assets/images/noimage.jpg') }}" alt="{{ $brand->name }}">
 
                         {{ $brand->name }}

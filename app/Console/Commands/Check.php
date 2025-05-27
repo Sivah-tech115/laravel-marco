@@ -24,7 +24,6 @@ class Check extends Command
      * Execute the console command.
      */
     public function handle()
-
     {
         $this->info('Check command executed successfully!');
     }

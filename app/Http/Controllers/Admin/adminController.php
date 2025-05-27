@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Merchant;
 use App\Models\Shortcode;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
+
 
 class adminController extends Controller
 {
@@ -119,39 +122,41 @@ class adminController extends Controller
     }
 
 
-    public function showFacebookFeedLink()
-    {
-        $products = Product::get();
+public function showFacebookFeedLink()
+{
+    $directory = storage_path('app/public/feeds');
+    $filePath = storage_path('app/public/feeds/feed.csv');
+    $publicPath = Storage::url('feeds/feed.csv');
 
-        $directory = storage_path('app/public/feeds');
-        $filePath = 'public/feeds/feed.csv';
-        $publicPath = Storage::url('feeds/feed.csv');
+    // Ensure the directory exists
+    if (!File::exists($directory)) {
+        File::makeDirectory($directory, 0755, true); // recursive = true
+    }
 
-        // Ensure the directory exists
-        if (!File::exists($directory)) {
-            File::makeDirectory($directory, 0755, true); // recursive = true
-        }
+    // Delete old file if it exists
+    if (File::exists($filePath)) {
+        File::delete($filePath);
+    }
 
-        // Delete old file if it exists
-        if (Storage::exists($filePath)) {
-            Storage::delete($filePath);
-        }
+    // Open file handle for writing (overwrite mode)
+    $handle = fopen($filePath, 'w');
 
-        // Prepare CSV data
-        $csvData = [];
-        $csvData[] = [
-            'id',
-            'title',
-            'description',
-            'availability',
-            'condition',
-            'price',
-            'link',
-            'image_link'
-        ];
+    // Write CSV headers first
+    fputcsv($handle, [
+        'id',
+        'title',
+        'description',
+        'availability',
+        'condition',
+        'price',
+        'link',
+        'image_link'
+    ]);
 
+    // Process products in chunks of 10,000 (adjust as needed)
+    Product::chunk(5000, function ($products) use ($handle) {
         foreach ($products as $product) {
-            $csvData[] = [
+            fputcsv($handle, [
                 $product->id,
                 $product->title,
                 strip_tags($product->description ?? ''),
@@ -160,28 +165,91 @@ class adminController extends Controller
                 number_format($product->price, 2),
                 url('/product/' . $product->slug),
                 $product->image_url
-            ];
+            ]);
         }
+    });
 
-        // Write CSV file
-        $handle = fopen(storage_path('app/public/feeds/feed.csv'), 'w');
-        foreach ($csvData as $row) {
-            fputcsv($handle, $row);
-        }
-        fclose($handle);
+    fclose($handle);
 
-        $feedUrl = asset($publicPath);
+    $feedUrl = asset($publicPath);
 
-        return view('Admin.feed', compact('feedUrl'));
-    }
+    return view('Admin.feed', compact('feedUrl'));
+}
+
 
 
 
     public function AllOffers()
 {
-    $products = Product::get(); // Show 10 per page
-    return view('Admin.products.index', compact('products'));
+   
+    return view('Admin.products.index');
 }
+
+
+public function AllCategories()
+{
+    $category = Category::get(); // Show 10 per page
+    return view('Admin.category.index', compact('category'));
+}
+
+
+
+public function AllOfferss(Request $request)
+{
+    $columns = [
+        0 => 'id',
+        1 => 'title',
+    ];
+
+    $limit = $request->input('length', 10);
+    $start = $request->input('start', 0);
+    $columnIndex = $request->input('order.0.column', 0);
+    $order = $columns[$columnIndex] ?? 'id';
+    $dir = $request->input('order.0.dir', 'desc');
+
+    $query = Product::query();
+
+    // Global search
+    if (!empty($request->input('search.value'))) {
+        $search = $request->input('search.value');
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'LIKE', "%{$search}%")
+              ->orWhere('slug', 'LIKE', "%{$search}%");
+        });
+    }
+
+    $totalData = Product::count();
+    $totalFiltered = $query->count();
+
+    $products = $query->orderBy($order, $dir)
+        ->offset($start)
+        ->limit($limit)
+        ->get();
+
+    // Optional: format response
+    $data = $products->map(function ($product) {
+        return [
+            'id' => $product->id,
+            'title' => $product->title,
+            'slug' => $product->slug,
+            'action' => '<a href="' . route('offers.product', $product->slug) . '" class="btn btn-sm btn-primary">View</a>',
+        ];
+    });
+
+    return response()->json([
+        'draw' => intval($request->input('draw')),
+        'recordsTotal' => $totalData,
+        'recordsFiltered' => $totalFiltered,
+        'data' => $data,
+    ]);
+}
+
+
+
+
+
+
+
 
 
 }

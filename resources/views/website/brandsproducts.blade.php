@@ -65,7 +65,7 @@
             <div class="pagination">
     {{-- Previous --}}
     @if ($page > 1)
-        <a href="{{ route('brands.offers', ['name' => $brandSlug, 'page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
+        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
             <i class="fa-solid fa-angle-left"></i>
         </a>
     @else
@@ -79,7 +79,7 @@
 
     {{-- First Page --}}
     @if ($startPage > 1)
-        <a href="{{ route('brands.offers', ['name' => $brandSlug, 'page' => 1, 'query' => request()->query('query')]) }}" class="step">1</a>
+        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => 1, 'query' => request()->query('query')]) }}" class="step">1</a>
         @if ($startPage > 2)
             <span class="step">...</span>
         @endif
@@ -87,7 +87,7 @@
 
     {{-- Numbered Pages --}}
     @for ($i = $startPage; $i <= $endPage; $i++)
-        <a href="{{ route('brands.offers', ['name' => $brandSlug, 'page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
+        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
     @endfor
 
     {{-- Last Page --}}
@@ -95,12 +95,12 @@
         @if ($endPage < $totalPages - 1)
             <span class="step">...</span>
         @endif
-        <a href="{{ route('brands.offers', ['name' => $brandSlug, 'page' => $totalPages, 'query' => request()->query('query')]) }}" class="step">{{ $totalPages }}</a>
+        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $totalPages, 'query' => request()->query('query')]) }}" class="step">{{ $totalPages }}</a>
     @endif
 
     {{-- Next --}}
     @if ($hasNextPage && $page < $totalPages)
-        <a href="{{ route('brands.offers', ['name' => $brandSlug, 'page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
+        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
             <i class="fa-solid fa-angle-right"></i>
         </a>
     @else

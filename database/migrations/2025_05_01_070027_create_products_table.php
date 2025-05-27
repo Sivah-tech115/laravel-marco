@@ -29,13 +29,14 @@ return new class extends Migration
             $table->string('availability_status')->nullable();
             $table->string('time_to_deliver')->nullable();
             $table->string('ean')->nullable();
+            $table->string('country')->nullable();
             $table->text('image_url')->nullable();
             $table->text('zoom_image_url')->nullable();
             $table->text('offer_url')->nullable();
             $table->text('go_url')->nullable();
             $table->decimal('estimated_cpc', 10, 5)->nullable();
             $table->decimal('estimated_mobile_cpc', 10, 5)->nullable();
-
+            $table->text('barcode_img')->nullable();
             // // Foreign keys
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('brand_id')->nullable()->constrained('brands')->onDelete('set null');

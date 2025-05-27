@@ -32,6 +32,8 @@ class Product extends Model
         'category_id',
         'brand_id',
         'merchant_id',
+        'country',
+        'barcode_img'
     ];
 
     public function category()

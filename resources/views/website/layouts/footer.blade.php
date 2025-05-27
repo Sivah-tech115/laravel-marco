@@ -95,7 +95,8 @@
         </div>
     </div>
     <div class="container_copyright">
-        <span>Copyright © 2025 Negozi Shop. All Rights Reserved.</span>
+        <?php $year = date('Y'); ?>
+        <span>Copyright © <?= $year ?> Negozi Shop. All Rights Reserved.</span>
         <a href="{{ route('privacy-policy') }}">Privacy Policy</a>
     </div>
 </footer>

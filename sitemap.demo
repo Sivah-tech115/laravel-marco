@@ -1,19 +1,108 @@
+Schema::create('sitemap_tracker', function (Blueprint $table) {
+    $table->id();
+    $table->string('type')->unique(); // e.g. 'products'
+    $table->timestamp('last_generated_at')->nullable();
+    $table->timestamps();
+});
+
+
+
 <?php
 
-namespace App\Services;
+namespace App\Console\Commands;
 
-use Spatie\Sitemap\SitemapGenerator;
+use Illuminate\Console\Command;
+use Spatie\Sitemap\Sitemap;
+use Spatie\Sitemap\SitemapIndex;
+use Spatie\Sitemap\Tags\Url;
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
-class SitemapService
+class GenerateIncrementalSitemap extends Command
 {
-    public function generateSitemap()
-    {
-        $sitemapPath = public_path('sitemap.xml');
+    protected $signature = 'sitemap:generate-incremental {--chunk=10000}';
+    protected $description = 'Incrementally generate sitemap chunks for updated products';
 
-        SitemapGenerator::create(config('app.url'))
-            ->configureCrawler(function ($crawler) {
-                $crawler->setMaximumDepth(3); // You can increase or decrease depth if needed
-            })
-            ->writeToFile($sitemapPath);
+    public function handle()
+    {
+        $this->info("🔍 Starting incremental sitemap generation...");
+
+        $chunkSize = (int) $this->option('chunk');
+        $storagePath = public_path('sitemaps');
+        if (!file_exists($storagePath)) {
+            mkdir($storagePath, 0775, true);
+        }
+
+        // Get last generated time for products
+        $tracker = DB::table('sitemap_tracker')->where('type', 'products')->first();
+        $lastGenerated = $tracker ? $tracker->last_generated_at : null;
+
+        // Use fallback if no last generated timestamp (e.g., a week ago)
+        if (!$lastGenerated) {
+            $lastGenerated = now()->subWeek();
+        }
+
+        $this->info("Fetching products updated since: {$lastGenerated}");
+
+        $totalUpdated = Product::where('updated_at', '>', $lastGenerated)->count();
+        $this->info("Total updated products: {$totalUpdated}");
+
+        if ($totalUpdated === 0) {
+            $this->info("No updated products found. Exiting.");
+            return;
+        }
+
+        // Process updated products in chunks
+        $chunkCount = 0;
+        Product::where('updated_at', '>', $lastGenerated)
+            ->whereNotNull('slug')
+            ->orderBy('updated_at')
+            ->chunk($chunkSize, function ($items) use (&$chunkCount, $storagePath) {
+                $chunkCount++;
+                $sitemapFileName = "sitemap-products-incremental-{$chunkCount}.xml";
+                $sitemapFilePath = $storagePath . '/' . $sitemapFileName;
+
+                $sitemap = Sitemap::create();
+
+                foreach ($items as $item) {
+                    try {
+                        $url = route('offers.product', ['name' => $item->slug]);
+
+                        $sitemap->add(
+                            Url::create($url)
+                                ->setLastModificationDate($item->updated_at)
+                                ->setPriority(0.8)
+                        );
+                    } catch (\Throwable $e) {
+                        $this->warn("Skipping product ID {$item->id}: " . $e->getMessage());
+                        continue;
+                    }
+                }
+
+                $sitemap->writeToFile($sitemapFilePath);
+                $this->info("Written chunk {$chunkCount} to {$sitemapFileName}");
+            });
+
+        // Update last generated timestamp to now
+        if ($tracker) {
+            DB::table('sitemap_tracker')->where('type', 'products')->update([
+                'last_generated_at' => now(),
+                'updated_at' => now(),
+            ]);
+        } else {
+            DB::table('sitemap_tracker')->insert([
+                'type' => 'products',
+                'last_generated_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        $this->info("✅ Incremental sitemap generation completed.");
     }
 }
+
+
+
+*/30 * * * * php /path/to/artisan sitemap:generate-incremental --chunk=10000 >> /dev/null 2>&1

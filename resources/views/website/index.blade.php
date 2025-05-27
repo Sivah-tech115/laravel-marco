@@ -58,7 +58,7 @@
                     </div>
                     <div class="pro_btns">
                         <a href="{{ $product['goUrl'] }}" class="btn">See More</a>
-                        <a href="{{ route('offers.product', [Str::slug($product['title'])]) }}" class="btn">Learn More</a>
+                        <a href="{{ route('offers.product', [Str::slug($product['title'])]) }}" class="btn" target="_blank" rel="noopener noreferrer">Learn More</a>
                     </div>
                 </li>
 

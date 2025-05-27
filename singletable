@@ -1,0 +1,124 @@
+<?php
+
+namespace App\Console\Commands;
+
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+
+class MigrateTables extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'app:migrate-tables';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Migrate one offer post from wp_posts and wp_postmeta into products table';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        // Step 1: Fetch WordPress offer post and its metadata
+        $offers = DB::table('wp_posts')
+            ->join('wp_postmeta', 'wp_posts.ID', '=', 'wp_postmeta.post_id')
+            ->select('wp_posts.*', 'wp_postmeta.meta_key', 'wp_postmeta.meta_value')
+            ->where('wp_posts.post_type', 'offers')
+            // ->where('wp_posts.ID',387 ) // change or remove for multiple
+            ->get();
+
+        // Step 2: Organize post data and metadata
+        $postData = [];
+        $metaData = [];
+
+        foreach ($offers as $row) {
+            if (empty($postData)) {
+                $postData = [
+                    'post_id'      => $row->ID,
+                    'title'        => $row->post_title,
+                    'description'  => $row->post_content,
+                    'slug'         => $row->post_name,
+                    'status'       => $row->post_status,
+                    'created_at'   => $row->post_date,
+                    'updated_at'   => $row->post_modified,
+                    'url'          => $row->guid,
+                ];
+            }
+
+            $metaData[$row->meta_key] = $row->meta_value;
+        }
+
+        // Step 3: Merge post and metadata
+        $productData = array_merge($postData, $metaData);
+
+        $categoryExternalId = null;
+        $merchantExternalId = null;
+
+        if (!empty($productData['cusotm_img_url'])) {
+            $imgUrl = $productData['cusotm_img_url'];
+            $urlParts = parse_url($imgUrl);
+
+            if (!empty($urlParts['query'])) {
+                parse_str($urlParts['query'], $queryParams);
+                $categoryExternalId = $queryParams['categoryId'] ?? null;
+                $merchantExternalId = $queryParams['merchantId'] ?? null;
+            }
+        }
+
+        $categoryId = null;
+        $merchantId = null;
+
+        if ($categoryExternalId) {
+            $categoryId = DB::table('categories')
+                ->where('kelkoo_category_id', $categoryExternalId)
+                ->value('id');
+        }
+
+          if ($merchantExternalId) {
+            $merchantId = DB::table('merchants')
+                ->where('kelkoo_merchant_id', $merchantExternalId) // ✅ Corrected
+                ->value('id');
+        }
+
+        $productData['category_id'] = $categoryId;
+        $productData['merchant_id'] = $merchantId;
+
+    
+        $mappedProductData = [
+            'title'           => $productData['title'] ?? null,
+            'description'        => $productData['description'] ?? null,
+            'slug'           => $productData['slug'] ?? null,
+            'keyword'      => $productData['title'] ?? null,
+            'meta_title'           => $productData['title'] ?? null,
+            'meta_description'        => $productData['description'] ?? null,
+            'country'        => $productData['offers_country'] ?? null,
+            'ean'       => $productData['offers_ean_code'] ?? null,
+            'image_url'      => $productData['cusotm_img_url'] ?? null,
+            'price'          => $productData['price'] ?? null,
+            'go_url'   => $productData['custom_go_url'] ?? null,
+            'availability_status' => 'in_stock',
+            'currency'       => $productData['price_cuurency'] ?? null,
+            'offer_id'=> $productData['offers_ids'] ?? null,
+            'merchant_id' => $productData['merchant_id'] ?? null,
+            'category_id'    => $productData['category_id'] ?? null,
+        ];
+
+
+        Product::updateOrCreate(
+            ['offer_id' => $mappedProductData['offer_id']], // unique identifier
+            $mappedProductData
+        );
+
+        // Step 8: Output the result
+        $this->info('Offer imported to products table:');
+        $this->line(json_encode($mappedProductData, JSON_PRETTY_PRINT));
+    }
+}

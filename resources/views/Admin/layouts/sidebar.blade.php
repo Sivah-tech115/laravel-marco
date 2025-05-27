@@ -64,6 +64,16 @@
                     </li>
 
                     <li class="nav-item ">
+                        <a href="{{route('admin.category.index')}}" class="nav-link">
+                            <span class="pcoded-micon">
+                                <i class="feather icon-award"></i>
+                            </span>
+                            <span class="pcoded-mtext">Category</span>
+                        </a>
+                    </li>
+
+
+                    <li class="nav-item ">
                         <a href="{{route('admin.seo.edit')}}" class="nav-link">
                             <span class="pcoded-micon">
                                 <i class="feather icon-settings"></i>
