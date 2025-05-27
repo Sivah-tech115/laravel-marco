@@ -67,6 +67,10 @@ class WebsiteController extends Controller
 
         foreach ($offers as $offer) {
 
+            if (Product::where('offer_id', $offer['offerId'])->exists()) {
+                continue;
+            }
+
             $kelkooBrandId = data_get($offer, 'brand.id');
             $kelkooCategoryId = data_get($offer, 'category.id');
             $kelkooMerchantId = data_get($offer, 'merchant.id');
@@ -212,6 +216,10 @@ class WebsiteController extends Controller
         // FetchKelkooProduct::dispatch($data);
 
         foreach ($offers as $offer) {
+
+            if (Product::where('offer_id', $offer['offerId'])->exists()) {
+                continue;
+            }
 
             $kelkooBrandId = data_get($offer, 'brand.id');
             $kelkooCategoryId = data_get($offer, 'category.id');
@@ -386,6 +394,10 @@ class WebsiteController extends Controller
 
         foreach ($offers as $offer) {
 
+            if (Product::where('offer_id', $offer['offerId'])->exists()) {
+                continue;
+            }
+
             $kelkooBrandId = data_get($offer, 'brand.id');
             $kelkooCategoryId = data_get($offer, 'category.id');
             $kelkooMerchantId = data_get($offer, 'merchant.id');
@@ -555,6 +567,10 @@ class WebsiteController extends Controller
         // FetchKelkooProduct::dispatch($data);
 
         foreach ($offers as $offer) {
+
+            if (Product::where('offer_id', $offer['offerId'])->exists()) {
+                continue;
+            }
 
             $kelkooBrandId = data_get($offer, 'brand.id');
             $kelkooCategoryId = data_get($offer, 'category.id');
