@@ -42,7 +42,7 @@ Route::get('/privacy-policy', function () {
 
 Route::get('/sitemap.xml', function () {
     $sitemapPath = public_path('sitemap.xml');
-    
+
     if (file_exists($sitemapPath)) {
         return Response::file($sitemapPath, [
             'Content-Type' => 'application/xml',
@@ -60,7 +60,7 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/api-key', [Kelkoosearch::class, 'Apikey'])->name('admin.api-key');
     Route::get('/merchant', [adminController::class, 'merchant'])->name('admin.merchant');
     Route::get('/merchant-product{id}', [adminController::class, 'merchantProduct'])->name('admin.merchant.product');
-   
+
     Route::get('/country-list', function () {
         $countries = Country::all();
         return view('Admin/kalkoosearch/countrylist', ['countries' => $countries]);
@@ -88,7 +88,4 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/offers', [adminController::class, 'AllOffers'])->name('admin.products.index');
 
     Route::get('/categories', [adminController::class, 'AllCategories'])->name('admin.category.index');
-
-
 });
-
