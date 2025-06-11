@@ -109,11 +109,15 @@
                     @endisset
                 </span>
 
-                @isset($product['merchant']['logoUrl'])
+                @if(!empty($product['merchant']['logoUrl']))
                 <a href="{{ $product['goUrl'] }}" class="pro_merchant">
                     <img src="{{ $product['merchant']['logoUrl'] }}" alt="{{ $product['merchant']['name'] ?? 'Merchant' }}">
                 </a>
-                @endisset
+                @else
+                <a href="{{ $product['goUrl'] }}" class="pro_merchant">
+                    {{ $product['merchant']['name'] ?? 'Merchant' }}
+                </a>
+                @endif
 
                 <a href="{{ $product['goUrl'] }}" class="btn secondary_btn">See More</a>
             </li>

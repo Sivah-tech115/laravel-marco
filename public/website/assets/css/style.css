@@ -802,7 +802,7 @@ span.pro_time {
     position: relative;
 }
 .productgrid_sec .with_sidebar .filter_sidebar {
-    width: calc(20% - 80px);
+   width: calc(23% - 80px);
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     padding: 20px;
     border-radius: 10px;
@@ -814,7 +814,7 @@ span.pro_time {
     
 }
 .productgrid_sec .with_sidebar .product_list {
-    width: calc(80% - 40px);
+   width: calc(77% - 40px);
 }
 section.productgrid_sec .with_sidebar ul.pro_grid li {
     max-width: calc(100% / 3 - 20px);
@@ -974,6 +974,8 @@ section.productgrid_sec .with_sidebar ul.pro_grid li {
     }
     .productgrid_sec .with_sidebar .filter_sidebar {
         position: static;
+        order: 3;
+ 
     }
     
 }

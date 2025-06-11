@@ -62,53 +62,55 @@
 
 
             </ul>
+
+            @if($totalPages > 1 || $hasNextPage)
             <div class="pagination">
-    {{-- Previous --}}
-    @if ($page > 1)
-        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
-            <i class="fa-solid fa-angle-left"></i>
-        </a>
-    @else
-        <span class="step prev disabled"><i class="fa-solid fa-angle-left"></i></span>
-    @endif
+                {{-- Previous --}}
+                @if ($page > 1)
+                <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
+                    <i class="fa-solid fa-angle-left"></i>
+                </a>
+                @else
+                <span class="step prev disabled"><i class="fa-solid fa-angle-left"></i></span>
+                @endif
 
-    @php
-        $startPage = max(1, $page - 2);
-        $endPage = min($totalPages, $page + 2);
-    @endphp
+                @php
+                $startPage = max(1, $page - 2);
+                $endPage = min($totalPages, $page + 2);
+                @endphp
 
-    {{-- First Page --}}
-    @if ($startPage > 1)
-        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => 1, 'query' => request()->query('query')]) }}" class="step">1</a>
-        @if ($startPage > 2)
-            <span class="step">...</span>
-        @endif
-    @endif
+                {{-- First Page --}}
+                @if ($startPage > 1)
+                <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => 1, 'query' => request()->query('query')]) }}" class="step">1</a>
+                @if ($startPage > 2)
+                <span class="step">...</span>
+                @endif
+                @endif
 
-    {{-- Numbered Pages --}}
-    @for ($i = $startPage; $i <= $endPage; $i++)
-        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
-    @endfor
+                {{-- Numbered Pages --}}
+                @for ($i = $startPage; $i <= $endPage; $i++)
+                    <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
+                    @endfor
 
-    {{-- Last Page --}}
-    @if ($endPage < $totalPages)
-        @if ($endPage < $totalPages - 1)
-            <span class="step">...</span>
-        @endif
-        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $totalPages, 'query' => request()->query('query')]) }}" class="step">{{ $totalPages }}</a>
-    @endif
+                    {{-- Last Page --}}
+                    @if ($endPage < $totalPages)
+                        @if ($endPage < $totalPages - 1)
+                        <span class="step">...</span>
+                        @endif
+                        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $totalPages, 'query' => request()->query('query')]) }}" class="step">{{ $totalPages }}</a>
+                        @endif
 
-    {{-- Next --}}
-    @if ($hasNextPage && $page < $totalPages)
-        <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
-            <i class="fa-solid fa-angle-right"></i>
-        </a>
-    @else
-        <span class="step next disabled"><i class="fa-solid fa-angle-right"></i></span>
-    @endif
-</div>
+                        {{-- Next --}}
+                        @if ($hasNextPage && $page < $totalPages)
+                            <a href="{{ route('brands.offers', ['slug' => $brandSlug, 'page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
+                            <i class="fa-solid fa-angle-right"></i>
+                            </a>
+                            @else
+                            <span class="step next disabled"><i class="fa-solid fa-angle-right"></i></span>
+                            @endif
+            </div>
 
-
+            @endif
 
 
         </div>

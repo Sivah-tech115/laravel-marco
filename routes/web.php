@@ -29,8 +29,13 @@ Route::get('/shop', function () {
 Route::get('/brands', [WebsiteController::class, 'brands'])->name('brands');
 Route::get('/offers_brands/{slug}', [WebsiteController::class, 'brandProducts'])->name('brands.offers');
 
+// Route to show the product page (GET request)
+// GET route to show the offer page (first in the file)
+Route::get('/offers/{slug}', [WebsiteController::class, 'showOfferPage'])->name('offers.product.page');
 
-Route::get('/offers/{slug}', [WebsiteController::class, 'SingleBrandProduct'])->name('offers.product');
+// POST route to handle form submission (second in the file)
+Route::post('/offers/{slug}', [WebsiteController::class, 'SingleBrandProduct'])->name('offers.product');
+
 Route::get('/category/{slug}', [WebsiteController::class, 'categoryProducts'])->name('category.offers');
 
 Route::get('/merchants', [WebsiteController::class, 'Merchants'])->name('merchants');

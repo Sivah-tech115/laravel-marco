@@ -18,15 +18,73 @@
     </div>
 </section>
 <section class="productgrid_sec">
-    <div class="container">
+    <div class="container {{ request()->query('query') ? 'with_sidebar' : '' }}">
         <div class="hero_txt">
             <span>Products</span>
             <h2>All Offers</h2>
         </div>
+
+        <?php
+        $query = request()->query('query');
+        if ($query) {
+        ?>
+            <div class="filter_sidebar">
+                <form id="brandFilterForm" method="GET" action="{{ route('home') }}" class="{{ count($brandList) > 30 ? 'long-brand-list' : '' }}">
+
+                    {{-- Include query in the form --}}
+                    <input type="hidden" name="query" value="{{ request()->query('query') }}">
+
+                    {{-- Filter by Brand --}}
+                    <div class="filter_cards">
+                        <h5>Brands</h5>
+                        <div class="filter_box">
+                            @foreach($brandList as $brand)
+                            @php
+                            $isChecked = request()->query('brand') === $brand->slug;
+                            @endphp
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input"
+                                    name="brand" value="{{ $brand->slug }}"
+                                    id="brand_{{ $brand->id }}"
+                                    {{ $isChecked ? 'checked' : '' }}
+                                    onchange="this.form.submit();">
+                                <label class="form-check-label" for="brand_{{ $brand->id }}">{{ $brand->name }}</label>
+                            </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- {{-- Filter by Merchant --}}
+                <div class="filter_cards">
+                    <h5>Merchants</h5>
+                    <div class="filter_box">
+                        @foreach($merchantList as $merchant)
+                        @php
+                        $isChecked = request()->query('merchant') === $merchant->slug;
+                        @endphp
+                        <div class="form-check">
+                            <input type="radio" class="form-check-input"
+                                name="merchant" value="{{ $merchant->slug }}"
+                                id="merchant_{{ $merchant->id }}"
+                                {{ $isChecked ? 'checked' : '' }}
+                                onchange="this.form.submit();">
+                            <label class="form-check-label" for="merchant_{{ $merchant->id }}">{{ $merchant->name }}</label>
+                        </div>
+                        @endforeach
+                    </div>
+                </div> -->
+
+                </form>
+                <div class="filter_footer">
+                    <a href="{{ route('home', ['query' => request()->query('query')]) }}" class="btn secondary_btn">Clear Filters</a>
+                </div>
+            </div>
+        <?php
+        }
+        ?>
+
         <div class="product_list">
             <ul class="pro_grid">
-
-
                 @forelse($products as $product)
                 <li>
                     <div class="progrid_inner">
@@ -58,7 +116,14 @@
                     </div>
                     <div class="pro_btns">
                         <a href="{{ $product['goUrl'] }}" class="btn">See More</a>
-                        <a href="{{ route('offers.product', [Str::slug($product['title'])]) }}" class="btn" target="_blank" rel="noopener noreferrer">Learn More</a>
+                        <form action="{{ route('offers.product', ['slug' => Str::slug($product['title'])]) }}" method="POST" target="_blank">
+                            @csrf
+                            <!-- Hidden field for the offer_id -->
+                            <input type="hidden" name="offer_id" value="{{ $product['offerId'] }}">
+
+                            <button type="submit" class="btn" rel="noopener noreferrer">Learn More</button>
+                        </form>
+
                     </div>
                 </li>
 
@@ -71,7 +136,7 @@
             <div class="pagination">
                 {{-- Previous --}}
                 @if ($page > 1)
-                <a href="{{ route('home', ['page' => $page - 1, 'query' => request()->query('query')]) }}" class="step prev">
+                <a href="{{ route('home', ['brand' => request()->query('brand'), 'query' => request()->query('query'), 'page' => $page - 1]) }}" class="step prev">
                     <i class="fa-solid fa-angle-left"></i>
                 </a>
                 @else
@@ -85,7 +150,7 @@
 
                 {{-- First Page --}}
                 @if ($startPage > 1)
-                <a href="{{ route('home', ['page' => 1, 'query' => request()->query('query')]) }}" class="step">1</a>
+                <a href="{{ route('home', ['brand' => request()->query('brand'), 'query' => request()->query('query'), 'page' => 1]) }}" class="step">1</a>
                 @if ($startPage > 2)
                 <span class="step">...</span>
                 @endif
@@ -93,7 +158,7 @@
 
                 {{-- Numbered Pages --}}
                 @for ($i = $startPage; $i <= $endPage; $i++)
-                    <a href="{{ route('home', ['page' => $i, 'query' => request()->query('query')]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
+                    <a href="{{ route('home', ['brand' => request()->query('brand'), 'query' => request()->query('query'), 'page' => $i]) }}" class="step {{ $page == $i ? 'active' : '' }}">{{ $i }}</a>
                     @endfor
 
                     {{-- Last Page --}}
@@ -101,12 +166,12 @@
                         @if ($endPage < $totalPages - 1)
                         <span class="step">...</span>
                         @endif
-                        <a href="{{ route('home', ['page' => $totalPages, 'query' => request()->query('query')]) }}" class="step">{{ $totalPages }}</a>
+                        <a href="{{ route('home', ['brand' => request()->query('brand'), 'query' => request()->query('query'), 'page' => $totalPages]) }}" class="step">{{ $totalPages }}</a>
                         @endif
 
                         {{-- Next --}}
                         @if ($hasNextPage && $page < $totalPages)
-                            <a href="{{ route('home', ['page' => $page + 1, 'query' => request()->query('query')]) }}" class="step next">
+                            <a href="{{ route('home', ['brand' => request()->query('brand'), 'query' => request()->query('query'), 'page' => $page + 1]) }}" class="step next">
                             <i class="fa-solid fa-angle-right"></i>
                             </a>
                             @else
@@ -116,7 +181,18 @@
 
 
 
+
         </div>
     </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const brandCheckboxes = document.querySelectorAll('.brand-checkbox');
+        brandCheckboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                document.getElementById('brandFilterForm').submit();
+            });
+        });
+    });
+</script>
 @endsection

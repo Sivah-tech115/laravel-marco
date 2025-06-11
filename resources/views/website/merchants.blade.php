@@ -11,61 +11,78 @@
 </section>
 <section class="merchants_sec">
     <div class="container">
-        <div class="merchants_list">
+     <div class="merchants_list">
             <ul class="merchants_grid">
                 @foreach($brands as $brand)
-                <li>
+                 <li>
                     <a href="{{ route('merchant.offers', ['slug' => $brand->slug]) }}">
                         <img src="{{ $brand->image ?: asset('assets/images/noimage.jpg') }}" alt="{{ $brand->name }}">
 
                         {{ $brand->name }}
                     </a>
                 </li>
-
-
                 @endforeach
             </ul>
 
-            <div class="pagination">
-                {{-- Previous Page --}}
+            @php
+            $currentPage = $brands->currentPage();
+            $lastPage = $brands->lastPage();
+            $start = max($currentPage - 1, 1); // 1 page before current
+            $end = min($start + 2, $lastPage); // show max 3 pages total
+
+            // Re-adjust start if less than 3 pages showing
+            if ($end - $start < 2) {
+                $start=max($end - 2, 1);
+                }
+                @endphp
+
+                <div class="pagination">
+                {{-- Previous Page Link --}}
                 @if ($brands->onFirstPage())
                 <span class="step prev disabled"><i class="fa-solid fa-angle-left"></i></span>
                 @else
-                <a href="{{ $brands->previousPageUrl() }}" class="step prev">
-                    <i class="fa-solid fa-angle-left"></i>
-                </a>
+                <a href="{{ $brands->previousPageUrl() }}" class="step prev"><i class="fa-solid fa-angle-left"></i></a>
                 @endif
 
-                {{-- First 3 pages --}}
-                @for ($i = 1; $i <= min(3, $brands->lastPage()); $i++)
-                    <a href="{{ $brands->url($i) }}" class="step {{ $brands->currentPage() == $i ? 'active' : '' }}">{{ $i }}</a>
+                {{-- First Page Link with Ellipsis --}}
+                @if ($start > 1)
+                <a href="{{ $brands->url(1) }}" class="step">1</a>
+                @if ($start > 2)
+                <span class="step">...</span>
+                @endif
+                @endif
+
+                {{-- Page Number Links --}}
+                @for ($page = $start; $page <= $end; $page++)
+                    @if ($page==$currentPage)
+                    <span class="step active">{{ $page }}</span>
+                    @else
+                    <a href="{{ $brands->url($page) }}" class="step">{{ $page }}</a>
+                    @endif
                     @endfor
 
-                    {{-- Ellipsis if current page is far from the end --}}
-                    @if ($brands->lastPage() > 4)
-                    @if ($brands->currentPage() < $brands->lastPage() - 2)
+                    {{-- Last Page Link with Ellipsis --}}
+                    @if ($end < $lastPage)
+                        @if ($end < $lastPage - 1)
                         <span class="step">...</span>
                         @endif
-
-                        {{-- Last page --}}
-                        <a href="{{ $brands->url($brands->lastPage()) }}" class="step {{ $brands->currentPage() == $brands->lastPage() ? 'active' : '' }}">
-                            {{ $brands->lastPage() }}
-                        </a>
+                        <a href="{{ $brands->url($lastPage) }}" class="step">{{ $lastPage }}</a>
                         @endif
 
-                        {{-- Next Page --}}
+                        {{-- Next Page Link --}}
                         @if ($brands->hasMorePages())
-                        <a href="{{ $brands->nextPageUrl() }}" class="step next">
-                            <i class="fa-solid fa-angle-right"></i>
-                        </a>
+                        <a href="{{ $brands->nextPageUrl() }}" class="step next"><i class="fa-solid fa-angle-right"></i></a>
                         @else
                         <span class="step next disabled"><i class="fa-solid fa-angle-right"></i></span>
                         @endif
-            </div>
-
-
-
         </div>
+
+
+
+
+    </div>
     </div>
 </section>
+
+
 @endsection

@@ -101,8 +101,13 @@
                     <h3 class="pro_title"><a href="#">{{ $product['title'] }}</a></h3>
                     <div class="pro_btns">
                         <a href="{{ $product['goUrl'] }}" class="btn">See More</a>
-                        <a href="{{ route('offers.product', [Str::slug($product['title'])]) }}" class="btn" target="_blank" rel="noopener noreferrer">Learn More</a>
+                        <form action="{{ route('offers.product', ['slug' => Str::slug($product['title'])]) }}" method="POST" target="_blank">
+                            @csrf
+                            <!-- Hidden field for the offer_id -->
+                            <input type="hidden" name="offer_id" value="{{ $product['offerId'] }}">
 
+                            <button type="submit" class="btn" rel="noopener noreferrer">Learn More</button>
+                        </form>
                     </div>
                 </li>
 

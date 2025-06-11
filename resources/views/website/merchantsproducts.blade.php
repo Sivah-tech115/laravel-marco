@@ -59,6 +59,7 @@
 
 
             </ul>
+            @if($totalPages > 1 || $hasNextPage)
             <div class="pagination">
     {{-- Previous --}}
     @if ($page > 1)
@@ -104,7 +105,7 @@
         <span class="step next disabled"><i class="fa-solid fa-angle-right"></i></span>
     @endif
 </div>
-
+@endif
 
 
         </div>
